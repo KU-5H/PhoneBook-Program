@@ -10,16 +10,11 @@ public class Contact {
     private String gender;
 
     //Creating an object to hold the specific variables
-    public Contact(String firstName, String lastName, String phoneNumber, String email, String birthday, String address, String gender) {
+    public Contact(String firstName, String lastName) {
 
         //Setting all variables into the object
         this.fname = firstName;
         this.lname = lastName;
-        this.number = phoneNumber;
-        this.mail = email;
-        this.brithdate = birthday;
-        this.location = address;
-        this.gender = gender;
 
     }
 
@@ -83,8 +78,10 @@ public class Contact {
 
     //Returns a formatted version of the object
     public String getinfo() {
-        return "{" + this.fname + ", " + this.lname + ", " + this.number + ", " + this.mail + ", " + this.brithdate + ", " + this.location 
-        + ", " + this.gender + "}";
+
+        return "First Name: " + this.fname + "\nLast Name: " + this.lname + "\nPhone Number: " + 
+        this.number + "\nEmail: " + this.mail + "\nBirthday: " + this.brithdate + "\nLocation: " 
+        + this.location + "\nGender: " + this.gender;
     }
     
 }
