@@ -19,15 +19,13 @@ public class Phonebook {
 
     }
 
-    //Returns the format of all contacts
+    //Returns the format of all contacts (Meant for exporting)
     public String printList() {
 
-        //String format = "Contact # _: {First Name, Last Name, Phone Number, Email, Birthdate, Home Address, Gender} \n";
         String format = "";
 
         for(int i = 0; i < this.books.size(); i++) {
-            int counter = i+1;
-            format += "Contact #" + counter + " \n" + this.books.get(i).getinfo() +"\n\n";
+            format += this.books.get(i).toString() + "\n";
         }
 
         return format;
@@ -40,7 +38,6 @@ public class Phonebook {
 
     //Send the specific contact based on First and Last name
     public Contact getContact(String fname, String lname, int left, int right) {
-        
 
         //Checking if the rightside number is greater then the leftside to continue searching
         if(right >= left) {
@@ -48,13 +45,24 @@ public class Phonebook {
             //Finding the middle value
             int midValue = left + (right-left)/2;
 
+            //Making two variables that get the first and last name of thee middle index contact
+            String checkFirstName = this.books.get(midValue).getFirstName();
+            String checkLastName = this.books.get(midValue).getLastName();
+
+            //Two integers that determine if the two variables are equal
+            int firstName = checkFirstName.compareToIgnoreCase(fname);
+            int lastName = 0;
+            if(firstName == 0) {
+                lastName = checkLastName.compareToIgnoreCase(lname);
+            }
+
             //Checking if the middle value is equal to the name
-            if(this.books.get(midValue).getFirstName().compareToIgnoreCase(fname) == 0 && this.books.get(midValue).getLastName().compareToIgnoreCase(lname) == 0) {
+            if(firstName == 0 && lastName == 0) {
                 return this.books.get(midValue);
             }
 
             //Checking if the name comes before or after the middle value
-            if(this.books.get(midValue).getFirstName().compareToIgnoreCase(fname) >= 0 && this.books.get(midValue).getLastName().compareToIgnoreCase(lname) >= 0) {
+            if(firstName >= 0 && lastName >= 0) {
                 return getContact(fname, lname, left, midValue -1);
             } else {
                 return getContact(fname, lname, midValue + 1, right);
@@ -92,7 +100,9 @@ public class Phonebook {
             }
 
             //Change the smallest value into its position
-            Collections.swap(this.books, i, minIndex);
+            Contact tempContact = this.books.get(i);
+            this.books.set(i, this.books.get(minIndex));
+            this.books.set(minIndex, tempContact);
         }
     }
 
@@ -115,7 +125,9 @@ public class Phonebook {
 
                 //Swap elements if the second letter comes before the first
                 if(firstName1.compareToIgnoreCase(firstName2) < 0) {
-                    Collections.swap(this.books, j, j-1);
+                    Contact tempContact = this.books.get(j);
+                    this.books.set(j, this.books.get(j-1));
+                    this.books.set(j-1, tempContact);
                 }
             }
         }
@@ -126,5 +138,23 @@ public class Phonebook {
         this.books.remove(removal);
     }
 
+    //Remove all contacts
+    public void removeAll() {
+        this.books.clear();
+    }
+
+    //Returns the format of all contacts (Meant foir displaying to the console)
+    public String toString() {
+
+        //Make the string to hold the values
+        String format = "Contact #_: {First Name, Last Name, Phone Number, Email, Brithday, Address, Gender} \n";
+
+        for(int i = 0; i < this.books.size(); i++) {
+            int counter = i+1;
+            format += "Contact #"  + counter + ": {" + this.books.get(i).toString() +"}\n";
+        }
+
+        return format;
+    }
 
 }

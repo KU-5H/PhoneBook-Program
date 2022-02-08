@@ -76,12 +76,10 @@ public class Contact {
         this.gender = gender;
     }
 
-    //Returns a formatted version of the object
-    public String getinfo() {
-
-        return "First Name: " + this.fname + "\nLast Name: " + this.lname + "\nPhone Number: " + 
-        this.number + "\nEmail: " + this.mail + "\nBirthday: " + this.brithdate + "\nLocation: " 
-        + this.location + "\nGender: " + this.gender;
+    public String toString() {
+        return this.fname + ", " + this.lname + ", " + 
+        this.number + ", " + this.mail + ", " + this.brithdate + ", " 
+        + this.location + ", " + this.gender;
     }
     
 }

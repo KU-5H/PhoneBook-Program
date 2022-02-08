@@ -2,22 +2,27 @@
 Name: Kush Patel
 Due Date: 2022/01/20
 
-Description: TBD
+Description: Program that makes a phonebook where contacts can 
+be saved and modified in numerous ways.The program also allows users 
+to import and export files
 ****************************************************************/
 
 //Importing java tools
+import java.io.*;
 import java.util.*;
 
-import javax.swing.CellEditor;
 
 public class MyProgram {
-    public static void main(String[] args) {
-        
+
+
+    public static void main(String[] args) throws FileNotFoundException {
+
         //Scanner
         Scanner input = new Scanner(System.in);
-        
+
         //Create Phonebook object
         Phonebook contacts = new Phonebook();
+
 
         //Variable to get inputs from the user
         int choice = 0;
@@ -64,17 +69,17 @@ public class MyProgram {
                 Contact name = new Contact(firstName, lastName);
 
                 //Enter the rest of the information
-                System.out.println("Please enter a phone number (For the formatting, include hyphens. Ex 441-765-2345)");
+                System.out.println("Please enter a phone number (For the formatting, include hyphens. Ex. ###-###-####)");
                 String phoneNumber = input.nextLine();
                 name.setPhoneNumber(phoneNumber);
                 System.out.println("");
 
-                System.out.println("Please enter the contacts email");
+                System.out.println("Please enter the contacts email (Format: ______@____.com)");
                 String email = input.nextLine();
                 name.setEmail(email);
                 System.out.println("");
 
-                System.out.println("Please enter the birthday (Format: MM-DD-YYYY)");
+                System.out.println("Please enter the birthday (Format: MMM-DD-YYYY)");
                 String birthday = input.nextLine();
                 name.setBirthday(birthday);
                 System.out.println("");
@@ -84,7 +89,7 @@ public class MyProgram {
                 name.setAddress(address);
                 System.out.println("");
 
-                System.out.println("Please enter the Gender (Type either M,F or O)");
+                System.out.println("Please enter the Gender (Type either M(Male), F(Female) or O(Other))");
                 String gender = input.nextLine();
                 name.setGender(gender);
                 System.out.println("");
@@ -98,7 +103,7 @@ public class MyProgram {
             } else if(choice == 2) {
                 
                 //Calling method to get all names
-                System.out.println(contacts.printList());
+                System.out.println(contacts.toString());
                 System.out.println("");
 
             } else if(choice == 3) {
@@ -232,10 +237,8 @@ public class MyProgram {
                     System.out.println("Contact has been removed \n");
 
                 } else {
-
                     //Message if output is not yes
                     System.out.println("Either you have outputted NO or something else which means the contact has not been removed \n");
-
                 }
 
             } else if(choice == 5) {
@@ -247,7 +250,7 @@ public class MyProgram {
                 //Asking for the contacts last name
                 System.out.println("Please enter the contacts last name");
                 String lastName = input.nextLine();
-                System.out.println("\n");
+                System.out.println();
 
                 //Sorting the contacts first
                 contacts.sortFirst();
@@ -260,24 +263,71 @@ public class MyProgram {
                 //Displaying the contact if parameters are true
                 if(checker) {
                     System.out.println("Contact: ");
-                    System.out.println(contacts.getContact(firstName, lastName, 0, contact).getinfo() + "\n"); 
+                    System.out.println(contacts.getContact(firstName, lastName, 0, contact).toString() + "\n"); 
                 }
 
             } else if(choice == 6) {
 
                 //Call the method to sort by First Name
                 contacts.sortFirst();
-                System.out.println("Sorted contacts by first name \n");
+                System.out.println("Sorted contacts by first name:");
+                System.out.println(contacts.toString());
 
             } else if(choice == 7) {
 
                 //Call the method to sort by LastName
                 contacts.sortLast();
-                System.out.println("Sorted contacts by last name \n");
+
+                //Calling method to get all names and print them
+                System.out.println("Sorted contacts by last name:");
+                System.out.println(contacts.toString());
 
             } else if(choice == 8) {
 
+                //Ask user to make a name for the file
+                System.out.println("Please enter the name of the export file (including .csv): ");
+                String name = input.nextLine();
+
+                //Make a new file and export the contacts onto it
+                PrintWriter export = new PrintWriter(name);
+                export.println(contacts.printList());
+                export.close();
+                System.out.println("File Exported\n");
+
             } else if(choice == 9) {
+
+                //Ask user for name of the file
+                System.out.println("Please enter the name of the file (including .csv): ");
+                String name = input.nextLine();
+                System.out.println();
+
+                //Asking if the user put the correct format
+                System.out.println("The format of the file should be as follows:");
+                System.out.println("First name, last name, phone number, contacts email, birthday, address, gender");
+                System.out.println("Between the infromation, you MUST put a comma and a space to ensure the information is captured");
+                System.out.println("There must also be a new line for a new contact");
+                System.out.println("Here is an example: KusH, Patel, 654-546-3453, kush@gmail.com, 08-01-2000, 29 Livingstone Drive, M \n");
+                System.out.println("Not following this format may result in a loss of information. Do you have the correct format? (Yes/No)");
+
+                //Checking to see if the user has confirmed their format
+                String conformation = input.nextLine();
+                System.out.println();
+                
+                boolean checker = false;
+                conformation = conformation.toUpperCase();
+                if(conformation.equals("YES") || conformation.equals("Y")) {
+                    checker = true;
+                }
+
+                //Check if the importfile method can run
+                if(checker) {
+                    //Send the specific file name and phonebook object to the method
+                    importFile(name, contacts);
+                }
+
+                if(checker == false) {
+                    System.out.println("Either you have outputted no or something else. Please fix the formatting and try again.\n");
+                }
 
             } else if(choice == 10) {
                 System.out.println("Bye!");
@@ -296,5 +346,46 @@ public class MyProgram {
             return false;
         }
         return true;
+    }
+
+    //Method to import the file
+    public static void importFile(String name, Phonebook contacts) throws FileNotFoundException {
+
+        //Sanner object that locates the file
+        Scanner input = new Scanner(new File(name));
+
+        //Clear all contacts on the list
+        contacts.removeAll();
+
+        //While loop to iterate through all information in the file
+        while(input.hasNext()) {
+
+            //Variables that isolate one row of the file
+            String line = input.nextLine();
+            Scanner items = new Scanner(line);
+
+            //Delimiter to split the text based on a certain parameter
+            items.useDelimiter(", ");
+
+            //Making a new contact based on the imported file
+            Contact newPerson = new Contact(items.next(), items.next());
+            newPerson.setPhoneNumber(items.next());
+            newPerson.setEmail(items.next());
+            newPerson.setBirthday(items.next());
+            newPerson.setAddress(items.next());
+            newPerson.setGender(items.next());
+
+            //Adding the contact to the program
+            contacts.addContact(newPerson);
+
+            //Closing the items scanner
+            items.close();
+        }
+
+        //Closing the file scanner
+        input.close();
+
+        //Message to indicate what happened to the user
+        System.out.println("File Imported \n");
     }
 }
