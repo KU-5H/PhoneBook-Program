@@ -6,4 +6,4 @@ Program that makes a phonebook for you. Can do many things including:
 - Outputting contacts names 
 - Modifying contacts names
 - Deleting contacts
-- Importing/Exporting contacts from a file (WIP)
+- Importing/Exporting contacts from a file
